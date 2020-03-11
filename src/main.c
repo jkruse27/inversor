@@ -4,32 +4,49 @@
  */
 
 #include <stdio.h>
-const int tam_buffer=100;
+#define tam_buffer 100
 
-void invert_word(char *buffer, int start, int end){
-	char tmp;
+typedef struct Stack{
+	char data[tam_buffer];
+	int pos;
+} Stack;
 
-	for(int i = 0; start+i < end-i; i++){
-		tmp = buffer[start+i];
-		buffer[start+i] = buffer[end-i];
-		buffer[end-i] = tmp;
-	}
+void init_stack(Stack *s){
+	s->pos = 0;
+}
+
+void push(Stack *s, char c){
+	if(s->pos < tam_buffer)
+		s->data[(s->pos)++] = c;
+} 
+
+char pop(Stack *s){
+	if(s->pos >= 0)
+		return s->data[--(s->pos)];
+}
+
+void print_stack(Stack *s){
+	while(s->pos != 0)
+		printf("%c", pop(s));
 }
 
 int main() {
 	char buffer[tam_buffer];
+	Stack stack;
+	init_stack(&stack);
 	fgets(buffer, tam_buffer, stdin);
-
-	int start = 0, i;
-
-	for(i = 0; buffer[i] != '\n' && i < tam_buffer; i++){
- 		if(buffer[i] == ' '){
-			invert_word(buffer, start, i-1);
-			start = i + 1;
+	
+	for(int i = 0; buffer[i] != '\n'; i++){
+		if(buffer[i] == ' '){
+			print_stack(&stack);
+			printf(" ");
 		}
+		else
+			push(&stack, buffer[i]);
 	}
-	invert_word(buffer, start, i-1);
 
-	printf("%s", buffer);
+	print_stack(&stack);
+	printf("\n");
+	
 	return 0;
 }
